@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>User Form</title>
+  </head>
+  <body>
+    <form id="user-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      <br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <br>
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" name="phone" required>
+      <br>
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      const form = document.getElementById('user-form');
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const name = form.elements.name.value;
+        const email = form.elements.email.value;
+        const phone = form.elements.phone.value;
+
+        try {
+          const response = await fetch(`/api/user?email=${email}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            alert('User Found');
+          } else {
+            const createUserResponse = await fetch('/api/user', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ name, email, phone })
+            });
+            if (createUserResponse.ok) {
+              alert('User Created Successfully');
+            } else {
+              throw new Error('Failed to create user');
+            }
+          }
+        } catch (error) {
+          console.error(error);
+          alert('Something went wrong');
+        }
+      });
+    </script>
+  </body>
+</html>
